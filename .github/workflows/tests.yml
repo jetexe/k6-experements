@@ -23,7 +23,7 @@ jobs:
         uses: gacts/run-and-post-run@v1
         with:
           run: docker run --rm -d
-            --network "${{ job.container.network }}"
+            --network "host"
             --name mock -p 8080:8080
             -v "${{ github.workspace }}/back:/config:ro"
             jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080
