@@ -1,0 +1,54 @@
+name: tests
+
+on:
+  push:
+    branches: [ master, main ]
+    paths-ignore: [ '**.md' ]
+    tags-ignore: [ '**' ]
+  pull_request:
+    paths-ignore: [ '**.md' ]
+
+jobs:
+  k6:
+    name: Run performance tests
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: run testing app
+        uses: gacts/run-and-post-run@v1
+        with:
+          run: docker run --rm -d
+            --network "${{ job.container.network }}"
+            --name mock -p 8080:8080
+            -v "${{ github.workspace }}/back:/config:ro"
+            jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080
+          post: docker stop mock
+
+      - name: Wait app up and running
+        run: |
+          echo "Waiting a MMock..."
+          curl --output /dev/null \
+           --head -X GET --retry 20 \
+           --silent \
+           --retry-all-errors --retry-delay 1 \
+          http://localhost:8080/live
+
+      - name: Run k6 local test
+        uses: grafana/k6-action@v0.2.0
+        with:
+          filename: k6/ci.js
+          flags: --env HOST="http://mock"
+
+      - name: Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: e2e Tests
+          path: results.xml
+          reporter: java-junit
+          fail-on-error: true
