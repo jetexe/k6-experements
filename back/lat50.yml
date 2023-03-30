@@ -1,0 +1,12 @@
+description: Request with latency 50
+
+request:
+  method: GET
+  path: /lat50
+
+response:
+  statusCode: 200
+  body: '{ "lat": 50 }'
+
+control:
+  delay: 50ms

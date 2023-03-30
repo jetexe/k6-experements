@@ -1,0 +1,13 @@
+description: Crazy endpoint
+
+request:
+  method: GET
+  path: /crazy
+
+response:
+  statusCode: 200
+  body: '{ "crazy": true }'
+
+control:
+  crazy: true
+  delay: 100ms

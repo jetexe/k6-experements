@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+  back:
+    image: jordimartin/mmock:v3.1.5
+    volumes:
+      - ./back:/config:ro
+    ports: [ "8082:8082/tcp", "8080:8080/tcp" ] # MMock console: <http://127.0.0.1:8082>
+    command: -server-statistics=false -server-port 8080
+    healthcheck:
+      test: curl --fail http://localhost:8080/live
+
+  k6:
+    image: grafana/k6:0.43.1
+    volumes:
+      - ./k6:/config
+    environment:
+      HOST: back:8080
+      K6_OUT: 'influxdb=http://influxdb:8086/k6'
+      K6_INFLUXDB_PUSH_INTERVAL: "500ms"
+      K6_INFLUXDB_CONCURRENT_WRITES: 20
+    command: run /config/ci.js
+    depends_on:
+      - back
+      - influxdb
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=k6
+
+  grafana:
+    image: grafana/grafana:9.3.8
+    ports:
+      - "3000:3000" # <http://localhost:3000>
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/
+    depends_on:
+      - influxdb
