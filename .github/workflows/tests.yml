@@ -25,7 +25,7 @@ jobs:
           run: docker run --rm
             --network "host"
             -v "${{ github.workspace }}/back:/config:ro"
-            jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080
+            jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080 -server-ip=""
           post: docker stop mock
 
       - name: Wait app up and running
