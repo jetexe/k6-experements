@@ -24,6 +24,7 @@ jobs:
         with:
           run: docker run --rm -d
             --network "host"
+            --name mock
             -v "${{ github.workspace }}/back:/config:ro"
             jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080 -server-ip="" -server-tls-port=18080
           post: docker stop mock
