@@ -35,7 +35,7 @@ jobs:
           curl --output /dev/null \
            --head -X GET --retry 20 \
            --silent \
-           --retry-all-errors --retry-delay 1 \
+           --retry-connrefused --retry-delay 1 \
           http://localhost:8080/live
 
       - name: Run k6 local test
