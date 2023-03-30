@@ -7,6 +7,7 @@ export const options = {
     thresholds: {
         'http_req_duration{scenario:slow}': ['p(99)<1010'],
         'http_req_duration{scenario:quick}': ['p(99)<60'],
+        'checks': ['rate>0.99'],
     },
     scenarios: {
         quick: {
@@ -38,6 +39,8 @@ export function slow() {
 }
 
 export function handleSummary(data) {
+    console.log(jUnit(data))
+
     return {
         'stdout': textSummary(data, {indent: ' ', enableColors: true}), // Show the text summary to stdout...
         "results.xml": jUnit(data),
