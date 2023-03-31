@@ -49,8 +49,8 @@ jobs:
         run: | 
           docker run --rm \
           --network "perf-test" \
-          -v "${{ github.workspace }}/k6:/home/k6" \          
           --user "$(id -u):$(id -g)" \
+          -v "${{ github.workspace }}/k6:/home/k6" \
           loadimpact/k6:latest \
           run ci.js --env HOST="mock:8080"
 
