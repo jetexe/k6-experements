@@ -58,6 +58,6 @@ jobs:
         if: always()
         with:
           name: e2e Tests
-          path: results.xml
+          path: k6/results.xml
           reporter: java-junit
           fail-on-error: true
