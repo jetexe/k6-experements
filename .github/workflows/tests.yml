@@ -39,7 +39,6 @@ jobs:
           http://localhost:8080/live
 
       - name: Run k6 local test
-        uses: grafana/k6-action@v0.2.0
         run: | 
           docker run --rm \
           --network host \
