@@ -44,7 +44,7 @@ jobs:
           --network host \
           -v "${{ github.workspace }}/k6:/config" \
           loadimpact/k6:latest \
-          k6 run /config/ci.js --env HOST="mock:8080"
+          run /config/ci.js --env HOST="mock:8080"
 
       - name: Report
         uses: dorny/test-reporter@v1
