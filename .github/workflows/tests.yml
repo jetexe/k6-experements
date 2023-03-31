@@ -22,11 +22,18 @@ jobs:
       - name: run testing app
         uses: gacts/run-and-post-run@v1
         with:
+          run: docker network create perf-test
+          post: docker network rm perf-test
+
+      - name: run testing app
+        uses: gacts/run-and-post-run@v1
+        with:
           run: docker run --rm -d
-            --network "host"
+            --network "perf-test"
             --name mock
+            -p "8080:8080"
             -v "${{ github.workspace }}/back:/config:ro"
-            jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080 -server-ip="" -server-tls-port=18080
+            jordimartin/mmock:v3.1.5 -server-statistics=false -console=false -server-port 8080
           post: docker stop mock
 
       - name: Wait app up and running
@@ -41,7 +48,7 @@ jobs:
       - name: Run k6 local test
         run: | 
           docker run --rm \
-          --network host \
+          --network "perf-test" \
           -v "${{ github.workspace }}/k6:/config" \
           loadimpact/k6:latest \
           run /config/ci.js --env HOST="mock:8080"
@@ -54,12 +61,3 @@ jobs:
           path: results.xml
           reporter: java-junit
           fail-on-error: true
-
-      - name: Collect logs
-        if: always()
-        run: docker logs mock > mock.log
-
-      - name: Log artifact
-        if: always()
-        uses: actions/upload-artifact@v3
-        with: { path: ./*.log, name: e2e-logs, retention-days: 1 }
