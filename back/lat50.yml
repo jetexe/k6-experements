@@ -9,4 +9,4 @@ response:
   body: '{ "lat": 50 }'
 
 control:
-  delay: 50ms
+  delay: 2s
