@@ -50,6 +50,7 @@ jobs:
           docker run --rm \
           --network "perf-test" \
           -v "${{ github.workspace }}/k6:/config" \
+          -w /config \
           loadimpact/k6:latest \
           run /config/ci.js --env HOST="mock:8080"
 
