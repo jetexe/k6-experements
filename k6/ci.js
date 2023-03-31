@@ -39,10 +39,8 @@ export function slow() {
 }
 
 export function handleSummary(data) {
-    console.log(jUnit(data))
-
     return {
         'stdout': textSummary(data, {indent: ' ', enableColors: true}), // Show the text summary to stdout...
-        "results.xml": jUnit(data),
+        "./results.xml": jUnit(data),
     };
 }
